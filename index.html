@@ -5,6 +5,15 @@
   <title>Princess & Ninny 🌹</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- 🔑 IMPORT MAP (THIS IS THE FIX) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+
   <style>
     body {
       margin: 0;
@@ -79,9 +88,9 @@
 
   <audio id="music" src="music.mp3" loop></audio>
 
-  <!-- ✅ ES MODULE SCRIPT -->
+  <!-- ✅ ES MODULE -->
   <script type="module">
-    import * as THREE from "https://unpkg.com/three@0.160.0/build/three.module.js";
+    import * as THREE from "three";
     import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
 
     const roseBtn = document.getElementById("rose");
@@ -147,7 +156,7 @@
     roseBtn.addEventListener("click", () => {
       overlay.style.display = "block";
 
-      // 🔊 Music MUST start here (user interaction)
+      // 🎵 Audio must start from user interaction
       music.volume = 0.45;
       music.play().then(() => {
         console.log("🎵 Music playing");
