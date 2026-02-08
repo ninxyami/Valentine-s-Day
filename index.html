@@ -5,6 +5,7 @@
   <title>Princess & Ninny 🌹</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <!-- Import map -->
   <script type="importmap">
   {
     "imports": {
@@ -23,10 +24,11 @@
       background: linear-gradient(180deg, #fff1f5, #ffe4ec);
       font-family: Georgia, serif;
       color: #4a1c2a;
+      overflow-x: hidden;
     }
 
     .card {
-      background: rgba(255,255,255,0.92);
+      background: rgba(255,255,255,0.9);
       padding: 2.2rem 2rem;
       border-radius: 18px;
       max-width: 420px;
@@ -35,26 +37,45 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.1);
     }
 
-    .title { font-size: 1.6rem; }
-    .subtitle { font-size: 0.95rem; opacity: 0.75; margin-bottom: 1.6rem; }
+    .title {
+      font-size: 1.6rem;
+      margin-bottom: 0.3rem;
+    }
 
-    .countdown { font-size: 2.4rem; font-weight: bold; }
-    .theme { font-size: 1.1rem; margin: 1rem 0; }
-    .message { font-size: 1rem; line-height: 1.6; margin-bottom: 1.8rem; }
+    .subtitle {
+      font-size: 0.95rem;
+      opacity: 0.75;
+      margin-bottom: 1.8rem;
+    }
 
-    .main-btn {
-      font-size: 3.4rem;
+    .countdown {
+      font-size: 2.4rem;
+      font-weight: bold;
+      margin-bottom: 0.2rem;
+    }
+
+    .theme {
+      font-size: 1.1rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .message {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* Rose button */
+    .rose-btn {
+      font-size: 3.2rem;
       cursor: pointer;
-      user-select: none;
       animation: pulse 2s infinite;
     }
 
-    .secondary {
-      margin-top: 1rem;
-      font-size: 0.9rem;
+    .press {
+      margin-top: 0.4rem;
+      font-size: 0.85rem;
       opacity: 0.7;
-      cursor: pointer;
-      text-decoration: underline;
     }
 
     @keyframes pulse {
@@ -63,56 +84,35 @@
       100% { transform: scale(1); }
     }
 
-    /* Overlay */
+    /* Fullscreen overlay */
     #overlay {
       position: fixed;
       inset: 0;
       background: radial-gradient(circle, #1a1a1a, #000);
       display: none;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      z-index: 10;
+      z-index: 20;
       color: white;
-      overflow: hidden;
     }
 
-    #viewer { width: 100vw; height: 60vh; }
-    #frameAnim { max-width: 90vw; max-height: 60vh; display: none; }
-
-    #overlay.flash {
-      animation: flash 0.25s ease;
+    #love {
+      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.04em;
     }
 
-    @keyframes flash {
-      from { background: rgba(255,255,255,0.85); }
-      to { background: radial-gradient(circle, #1a1a1a, #000); }
-    }
-
-    #proposalText {
-      opacity: 0;
-      margin-top: 1.2rem;
-      font-size: 1.4rem;
-      transition: opacity 1s ease;
-    }
-
-    #proposalText.show { opacity: 1; }
-
-    #retry {
-      display: none;
-      margin-top: 1rem;
-      padding: 0.6rem 1.4rem;
-      border-radius: 20px;
-      border: none;
-      cursor: pointer;
-      font-family: Georgia, serif;
+    #viewer {
+      width: 100vw;
+      height: 60vh;
     }
 
     #close {
       position: absolute;
       top: 20px;
       right: 25px;
-      font-size: 2rem;
+      font-size: 2.2rem;
       background: none;
       border: none;
       color: white;
@@ -123,176 +123,130 @@
 
 <body>
 
-<div class="card">
-  <div class="title">For my Princess, Cece</div>
-  <div class="subtitle">from your Ninny</div>
+  <div class="card">
+    <div class="title">For my Princess, Cece</div>
+    <div class="subtitle">from your Ninny</div>
 
-  <div class="countdown" id="countdown"></div>
-  <div class="theme" id="theme"></div>
-  <div class="message" id="message"></div>
+    <div class="countdown" id="countdown"></div>
+    <div class="theme" id="theme"></div>
 
-  <div class="main-btn" id="mainBtn"></div>
-  <div class="secondary" id="viewRose" style="display:none;">View Rose Day 🌹</div>
-</div>
+    <div class="message" id="message"></div>
 
-<div id="overlay">
-  <div id="viewer"></div>
-  <img id="frameAnim" />
-  <div id="proposalText">Will you be mine?</div>
-  <button id="retry">Try again</button>
-  <button id="close">×</button>
-</div>
+    <div class="rose-btn" id="rose">🌹</div>
+    <div class="press">Press me</div>
+  </div>
 
-<audio id="roseMusic" src="./music.mp3" loop></audio>
-<audio id="proposeMusic" src="./propose.mp3" loop></audio>
-<audio id="clickSound" src="./click.mp3" preload="auto"></audio>
+  <!-- Fullscreen experience -->
+  <div id="overlay">
+    <div id="love">I love you</div>
+    <div id="viewer"></div>
+    <button id="close">×</button>
+  </div>
 
-<script type="module">
-  import * as THREE from "three";
-  import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
-  import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+  <audio id="music" src="music.mp3" loop></audio>
 
-  /* ===== Date logic ===== */
-  const today = new Date();
-  const valentine = new Date(today.getFullYear(), 1, 14);
-  const daysLeft = Math.ceil((valentine - today) / 86400000);
-  const index = Math.max(0, Math.min(6, 7 - daysLeft));
+  <script type="module">
+    import * as THREE from "three";
+    import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
+    import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
 
-  document.getElementById("countdown").textContent = daysLeft > 0 ? daysLeft : "Today";
-  document.getElementById("theme").textContent = index === 1 ? "Propose Day 💍" : "Rose Day 🌹";
-  document.getElementById("message").textContent =
-    index === 1 ? "Hold the ring. Don’t let go." : "I wish I could give you a real rose today.";
+    /* ===== Countdown content ===== */
+    const themes = [
+      { name: "Rose Day 🌹", text: "I wish I could give you a real rose today. So here’s one made with time, care, and a lot of love." },
+      { name: "Propose Day 💍", text: "I don’t need a big moment to choose you. I already do, every day." },
+      { name: "Chocolate Day 🍫", text: "Sweet things remind me of you. Not because you’re sweet, but because you make life feel lighter." },
+      { name: "Teddy Day 🧸", text: "If you were here, I’d hug you a little longer than usual. Just because." },
+      { name: "Promise Day 🤞", text: "I promise to keep choosing you, even when things are quiet, even from far away." },
+      { name: "Hug Day 🤍", text: "Distance can’t stop warmth. Close your eyes, that feeling is me." },
+      { name: "Kiss Day 💋", text: "I’m saving this one for when I see you." }
+    ];
 
-  /* ===== Elements ===== */
-  const mainBtn = document.getElementById("mainBtn");
-  const viewRose = document.getElementById("viewRose");
-  const overlay = document.getElementById("overlay");
-  const frameImg = document.getElementById("frameAnim");
-  const proposalText = document.getElementById("proposalText");
-  const retry = document.getElementById("retry");
-  const closeBtn = document.getElementById("close");
+    const today = new Date();
+    const valentine = new Date(today.getFullYear(), 1, 14);
+    const diff = valentine - today;
+    const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    const index = Math.max(0, Math.min(6, 7 - daysLeft));
 
-  const roseMusic = document.getElementById("roseMusic");
-  const proposeMusic = document.getElementById("proposeMusic");
-  const clickSound = document.getElementById("clickSound");
+    document.getElementById("countdown").textContent =
+      daysLeft > 0 ? daysLeft : "Today";
 
-  mainBtn.textContent = index === 1 ? "💍" : "🌹";
-  if (index === 1) viewRose.style.display = "block";
+    document.getElementById("theme").textContent =
+      daysLeft > 0 ? themes[index].name : "Happy Valentine’s Day ❤️";
 
-  /* ===== Frame animation (HOLD) ===== */
-  const totalFrames = 29;
-  let frame = 1;
-  let holding = false;
-  let completed = false;
+    document.getElementById("message").textContent =
+      daysLeft > 0 ? themes[index].text : "I’m right here. Always.";
 
-  function framePath(n) {
-    return `./assets/${n}.jpg`;
-  }
+    /* ===== Fullscreen 3D rose ===== */
+    const roseBtn = document.getElementById("rose");
+    const overlay = document.getElementById("overlay");
+    const closeBtn = document.getElementById("close");
+    const music = document.getElementById("music");
+    const viewer = document.getElementById("viewer");
 
-  frameImg.src = framePath(1);
+    let scene, camera, renderer, model, controls, started = false;
 
-  function animationLoop() {
-    if (overlay.style.display === "flex" && index === 1 && !completed) {
-      frame += holding ? 0.6 : -0.9;
-      frame = Math.max(1, Math.min(totalFrames, frame));
-      frameImg.src = framePath(Math.floor(frame));
+    function init3D() {
+      scene = new THREE.Scene();
 
-      if (frame >= totalFrames) {
-        completed = true;
-        proposeMusic.pause();
-        clickSound.currentTime = 0;
-        clickSound.play().catch(() => {});
-        overlay.classList.add("flash");
-        proposalText.classList.add("show");
-        retry.style.display = "inline-block";
-      }
+      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera.position.set(0, 1.2, 3);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      viewer.appendChild(renderer.domElement);
+
+      scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+
+      const light = new THREE.DirectionalLight(0xffc0cb, 1);
+      light.position.set(2, 3, 4);
+      scene.add(light);
+
+      const loader = new GLTFLoader();
+      loader.load("./rose.glb", gltf => {
+        model = gltf.scene;
+        model.scale.set(0.6, 0.6, 0.6);
+        scene.add(model);
+      });
+
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.enableDamping = true;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.8;
+
+      animate();
     }
-    requestAnimationFrame(animationLoop);
-  }
-  animationLoop();
 
-  /* ===== 3D Rose ===== */
-  let scene, camera, renderer, started = false;
-  function initRose() {
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
-    camera.position.set(0, 1.2, 3);
-
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(innerWidth, innerHeight);
-    document.getElementById("viewer").appendChild(renderer.domElement);
-
-    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-    const light = new THREE.DirectionalLight(0xffc0cb, 1);
-    light.position.set(2, 3, 4);
-    scene.add(light);
-
-    new GLTFLoader().load("./rose.glb", g => scene.add(g.scene));
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.autoRotate = true;
-
-    (function animate() {
+    function animate() {
       requestAnimationFrame(animate);
-      controls.update();
+      if (controls) controls.update();
       renderer.render(scene, camera);
-    })();
-  }
-
-  /* ===== Interaction ===== */
-  mainBtn.onclick = () => {
-    overlay.style.display = "flex";
-    proposalText.classList.remove("show");
-    retry.style.display = "none";
-    overlay.classList.remove("flash");
-
-    roseMusic.pause();
-    proposeMusic.pause();
-
-    if (index === 1) {
-      frameImg.style.display = "block";
-      document.getElementById("viewer").style.display = "none";
-      frame = 1;
-      completed = false;
-      holding = false;
-      proposeMusic.volume = 0.45;
-      proposeMusic.play().catch(() => {});
-    } else {
-      frameImg.style.display = "none";
-      document.getElementById("viewer").style.display = "block";
-      roseMusic.volume = 0.45;
-      roseMusic.play().catch(() => {});
-      if (!started) initRose();
-      started = true;
     }
-  };
 
-  overlay.addEventListener("pointerdown", () => holding = true);
-  overlay.addEventListener("pointerup", () => holding = false);
-  overlay.addEventListener("pointerleave", () => holding = false);
+    roseBtn.onclick = () => {
+      overlay.style.display = "flex";
+      music.volume = 0.45;
+      music.play().catch(() => {});
+      if (!started) {
+        init3D();
+        started = true;
+      }
+    };
 
-  retry.onclick = () => {
-    completed = false;
-    frame = 1;
-    proposalText.classList.remove("show");
-    retry.style.display = "none";
-  };
+    closeBtn.onclick = () => {
+      overlay.style.display = "none";
+      music.pause();
+    };
 
-  viewRose.onclick = () => {
-    overlay.style.display = "flex";
-    frameImg.style.display = "none";
-    roseMusic.volume = 0.45;
-    roseMusic.play().catch(() => {});
-    if (!started) initRose();
-    started = true;
-  };
-
-  closeBtn.onclick = () => {
-    overlay.style.display = "none";
-    holding = false;
-    roseMusic.pause();
-    proposeMusic.pause();
-  };
-</script>
+    window.addEventListener("resize", () => {
+      if (!renderer || !camera) return;
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
 
 </body>
 </html>
