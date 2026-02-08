@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Princess & Ninny 💌</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #fff1f5, #ffe4ec);
+      font-family: Georgia, serif;
+      color: #4a1c2a;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.92);
+      padding: 2.2rem 2rem;
+      border-radius: 18px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+    }
+
+    .date {
+      font-size: 0.95rem;
+      opacity: 0.7;
+      margin-bottom: 0.4rem;
+    }
+
+    .emoji {
+      font-size: 3.2rem;
+      margin: 0.6rem 0;
+    }
+
+    .title {
+      font-size: 1.4rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .text {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 1.6rem;
+    }
+
+    .open-btn {
+      display: inline-block;
+      padding: 0.7rem 1.6rem;
+      border-radius: 22px;
+      background: #4a1c2a;
+      color: white;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    .past {
+      margin-top: 1.6rem;
+      font-size: 0.85rem;
+      opacity: 0.7;
+    }
+
+    .past a {
+      color: inherit;
+      text-decoration: underline;
+      margin: 0 0.4rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="date" id="dateText"></div>
+  <div class="emoji" id="emoji"></div>
+  <div class="title" id="title"></div>
+  <div class="text" id="text"></div>
+
+  <a id="openLink" class="open-btn" href="#">Open today’s surprise</a>
+
+  <div class="past" id="pastLinks"></div>
+</div>
+
+<script>
+  const days = {
+    7: {
+      emoji: "🌹",
+      title: "Rose Day",
+      text: "A small beginning, made with a lot of love.",
+      link: "rose.html"
+    },
+    8: {
+      emoji: "💍",
+      title: "Propose Day",
+      text: "Hold the moment. Don’t let go.",
+      link: "propose.html"
+    },
+    9: {
+      emoji: "🍫",
+      title: "Chocolate Day",
+      text: "Sweet things, just because.",
+      link: "chocolate.html"
+    },
+    10: {
+      emoji: "🧸",
+      title: "Teddy Day",
+      text: "Something warm to hold onto.",
+      link: "teddy.html"
+    },
+    11: {
+      emoji: "🤞",
+      title: "Promise Day",
+      text: "Some things are worth choosing every day.",
+      link: "promise.html"
+    },
+    12: {
+      emoji: "🤍",
+      title: "Hug Day",
+      text: "Close your eyes. I’m right there.",
+      link: "hug.html"
+    },
+    13: {
+      emoji: "💋",
+      title: "Kiss Day",
+      text: "Saving this one.",
+      link: "kiss.html"
+    },
+    14: {
+      emoji: "❤️",
+      title: "Valentine’s Day",
+      text: "It was always you.",
+      link: "finale.html"
+    }
+  };
+
+  const today = new Date();
+  const day = today.getDate();
+  const month = today.getMonth(); // Feb = 1
+
+  const entry = month === 1 && days[day] ? days[day] : {
+    emoji: "💌",
+    title: "Valentine’s Week",
+    text: "Come back during Valentine’s week.",
+    link: "#"
+  };
+
+  document.getElementById("dateText").textContent =
+    today.toLocaleDateString(undefined, { day: "numeric", month: "long" });
+
+  document.getElementById("emoji").textContent = entry.emoji;
+  document.getElementById("title").textContent = entry.title;
+  document.getElementById("text").textContent = entry.text;
+  document.getElementById("openLink").href = entry.link;
+
+  const past = document.getElementById("pastLinks");
+  if (month === 1 && day > 7) {
+    past.innerHTML = "Previous days: ";
+    for (let d = 7; d < day; d++) {
+      if (days[d]) {
+        const a = document.createElement("a");
+        a.href = days[d].link;
+        a.textContent = days[d].emoji;
+        past.appendChild(a);
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
