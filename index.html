@@ -140,8 +140,6 @@
   <div id="overlay">
     <div id="love">I love you</div>
     <div id="viewer"></div>
-<img id="ringAnim" style="display:none; max-width:90vw; max-height:60vh;" />
-
     <button id="close">×</button>
   </div>
 
@@ -184,17 +182,6 @@
     const closeBtn = document.getElementById("close");
     const music = document.getElementById("music");
     const viewer = document.getElementById("viewer");
-    const ringImg = document.getElementById("ringAnim");
-
-let frame = 1;
-const totalFrames = 29;
-let holding = false;
-    function ringFrame(n) {
-  return `./assets/${n}.jpg`;
-}
-ringImg.src = ringFrame(1);
-
-
 
     let scene, camera, renderer, model, controls, started = false;
 
@@ -239,16 +226,14 @@ ringImg.src = ringFrame(1);
     }
 
     roseBtn.onclick = () => {
-  overlay.style.display = "flex";
-  music.volume = 0.45;
-  music.play().catch(() => {});
-
-  viewer.style.display = "none";
-  ringImg.style.display = "block";
-
-  frame = 1;
-  holding = false;
-};
+      overlay.style.display = "flex";
+      music.volume = 0.45;
+      music.play().catch(() => {});
+      if (!started) {
+        init3D();
+        started = true;
+      }
+    };
 
     closeBtn.onclick = () => {
       overlay.style.display = "none";
@@ -261,40 +246,7 @@ ringImg.src = ringFrame(1);
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
-
-function ringLoop() {
-  if (ringImg.style.display === "block") {
-    if (holding) {
-      frame += 0.6;      // forward speed
-    } else {
-      frame -= 0.8;      // backward speed
-    }
-
-    frame = Math.max(1, Math.min(totalFrames, frame));
-    ringImg.src = ringFrame(Math.floor(frame));
-  }
-
-  requestAnimationFrame(ringLoop);
-}
-
-ringLoop();
-
-    overlay.addEventListener("pointerdown", () => {
-  holding = true;
-});
-
-overlay.addEventListener("pointerup", () => {
-  holding = false;
-});
-
-overlay.addEventListener("pointerleave", () => {
-  holding = false;
-});
-
-
-    
   </script>
 
 </body>
 </html>
-
