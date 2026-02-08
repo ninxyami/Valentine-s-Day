@@ -74,6 +74,7 @@
       flex-direction: column;
       z-index: 10;
       color: white;
+      overflow: hidden;
     }
 
     #viewer { width: 100vw; height: 60vh; }
@@ -142,70 +143,75 @@
   <button id="close">×</button>
 </div>
 
-<audio id="music" src="music.mp3" loop></audio>
-<audio id="clickSound" src="click.mp3"></audio>
+<audio id="roseMusic" src="./music.mp3" loop></audio>
+<audio id="proposeMusic" src="./propose.mp3" loop></audio>
+<audio id="clickSound" src="./click.mp3" preload="auto"></audio>
 
 <script type="module">
   import * as THREE from "three";
   import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
   import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
 
+  /* ===== Date logic ===== */
   const today = new Date();
   const valentine = new Date(today.getFullYear(), 1, 14);
   const daysLeft = Math.ceil((valentine - today) / 86400000);
   const index = Math.max(0, Math.min(6, 7 - daysLeft));
 
-  const themes = [
-    "Rose Day 🌹",
-    "Propose Day 💍"
-  ];
-
   document.getElementById("countdown").textContent = daysLeft > 0 ? daysLeft : "Today";
-  document.getElementById("theme").textContent = themes[index] || "Valentine’s ❤️";
+  document.getElementById("theme").textContent = index === 1 ? "Propose Day 💍" : "Rose Day 🌹";
   document.getElementById("message").textContent =
-    index === 1
-      ? "Hold the ring. Don’t let go."
-      : "I wish I could give you a real rose today.";
+    index === 1 ? "Hold the ring. Don’t let go." : "I wish I could give you a real rose today.";
 
+  /* ===== Elements ===== */
   const mainBtn = document.getElementById("mainBtn");
   const viewRose = document.getElementById("viewRose");
   const overlay = document.getElementById("overlay");
   const frameImg = document.getElementById("frameAnim");
   const proposalText = document.getElementById("proposalText");
   const retry = document.getElementById("retry");
+  const closeBtn = document.getElementById("close");
+
+  const roseMusic = document.getElementById("roseMusic");
+  const proposeMusic = document.getElementById("proposeMusic");
   const clickSound = document.getElementById("clickSound");
 
   mainBtn.textContent = index === 1 ? "💍" : "🌹";
   if (index === 1) viewRose.style.display = "block";
 
-  /* ===== Propose Day Hold Animation ===== */
+  /* ===== Frame animation (HOLD) ===== */
   const totalFrames = 29;
   let frame = 1;
   let holding = false;
   let completed = false;
 
   function framePath(n) {
-    return `/assets/ring/frame_${String(n).padStart(2, "0")}.jpg`;
+    return `./assets/${n}.jpg`;
   }
 
-  function update() {
-    if (!completed) {
+  frameImg.src = framePath(1);
+
+  function animationLoop() {
+    if (overlay.style.display === "flex" && index === 1 && !completed) {
       frame += holding ? 0.6 : -0.9;
       frame = Math.max(1, Math.min(totalFrames, frame));
       frameImg.src = framePath(Math.floor(frame));
 
       if (frame >= totalFrames) {
         completed = true;
-        clickSound.play();
+        proposeMusic.pause();
+        clickSound.currentTime = 0;
+        clickSound.play().catch(() => {});
         overlay.classList.add("flash");
         proposalText.classList.add("show");
         retry.style.display = "inline-block";
       }
     }
-    requestAnimationFrame(update);
+    requestAnimationFrame(animationLoop);
   }
+  animationLoop();
 
-  /* ===== 3D Rose (UNCHANGED) ===== */
+  /* ===== 3D Rose ===== */
   let scene, camera, renderer, started = false;
   function initRose() {
     scene = new THREE.Scene();
@@ -236,11 +242,25 @@
   mainBtn.onclick = () => {
     overlay.style.display = "flex";
     proposalText.classList.remove("show");
+    retry.style.display = "none";
+    overlay.classList.remove("flash");
+
+    roseMusic.pause();
+    proposeMusic.pause();
 
     if (index === 1) {
       frameImg.style.display = "block";
-      update();
+      document.getElementById("viewer").style.display = "none";
+      frame = 1;
+      completed = false;
+      holding = false;
+      proposeMusic.volume = 0.45;
+      proposeMusic.play().catch(() => {});
     } else {
+      frameImg.style.display = "none";
+      document.getElementById("viewer").style.display = "block";
+      roseMusic.volume = 0.45;
+      roseMusic.play().catch(() => {});
       if (!started) initRose();
       started = true;
     }
@@ -253,20 +273,24 @@
   retry.onclick = () => {
     completed = false;
     frame = 1;
-    retry.style.display = "none";
     proposalText.classList.remove("show");
+    retry.style.display = "none";
   };
 
   viewRose.onclick = () => {
     overlay.style.display = "flex";
     frameImg.style.display = "none";
+    roseMusic.volume = 0.45;
+    roseMusic.play().catch(() => {});
     if (!started) initRose();
     started = true;
   };
 
-  document.getElementById("close").onclick = () => {
+  closeBtn.onclick = () => {
     overlay.style.display = "none";
     holding = false;
+    roseMusic.pause();
+    proposeMusic.pause();
   };
 </script>
 
