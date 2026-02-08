@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Princess & Ninny 🌹</title>
+  <title>Rose Day 🌹</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Import map -->
@@ -48,24 +48,12 @@
       margin-bottom: 1.8rem;
     }
 
-    .countdown {
-      font-size: 2.4rem;
-      font-weight: bold;
-      margin-bottom: 0.2rem;
-    }
-
-    .theme {
-      font-size: 1.1rem;
-      margin-bottom: 1.4rem;
-    }
-
     .message {
       font-size: 1rem;
       line-height: 1.6;
       margin-bottom: 2rem;
     }
 
-    /* Rose button */
     .rose-btn {
       font-size: 3.2rem;
       cursor: pointer;
@@ -127,16 +115,16 @@
     <div class="title">For my Princess, Cece</div>
     <div class="subtitle">from your Ninny</div>
 
-    <div class="countdown" id="countdown"></div>
-    <div class="theme" id="theme"></div>
-
-    <div class="message" id="message"></div>
+    <div class="message">
+      I wish I could give you a real rose today.  
+      So here’s one made with time, care, and a lot of love.
+    </div>
 
     <div class="rose-btn" id="rose">🌹</div>
     <div class="press">Press me</div>
   </div>
 
-  <!-- Fullscreen experience -->
+  <!-- Fullscreen Rose Experience -->
   <div id="overlay">
     <div id="love">I love you</div>
     <div id="viewer"></div>
@@ -150,45 +138,23 @@
     import { GLTFLoader } from "https://unpkg.com/three@0.160.0/examples/jsm/loaders/GLTFLoader.js";
     import { OrbitControls } from "https://unpkg.com/three@0.160.0/examples/jsm/controls/OrbitControls.js";
 
-    /* ===== Countdown content ===== */
-    const themes = [
-      { name: "Rose Day 🌹", text: "I wish I could give you a real rose today. So here’s one made with time, care, and a lot of love." },
-      { name: "Propose Day 💍", text: "I don’t need a big moment to choose you. I already do, every day." },
-      { name: "Chocolate Day 🍫", text: "Sweet things remind me of you. Not because you’re sweet, but because you make life feel lighter." },
-      { name: "Teddy Day 🧸", text: "If you were here, I’d hug you a little longer than usual. Just because." },
-      { name: "Promise Day 🤞", text: "I promise to keep choosing you, even when things are quiet, even from far away." },
-      { name: "Hug Day 🤍", text: "Distance can’t stop warmth. Close your eyes, that feeling is me." },
-      { name: "Kiss Day 💋", text: "I’m saving this one for when I see you." }
-    ];
-
-    const today = new Date();
-    const valentine = new Date(today.getFullYear(), 1, 14);
-    const diff = valentine - today;
-    const daysLeft = Math.ceil(diff / (1000 * 60 * 60 * 24));
-    const index = Math.max(0, Math.min(6, 7 - daysLeft));
-
-    document.getElementById("countdown").textContent =
-      daysLeft > 0 ? daysLeft : "Today";
-
-    document.getElementById("theme").textContent =
-      daysLeft > 0 ? themes[index].name : "Happy Valentine’s Day ❤️";
-
-    document.getElementById("message").textContent =
-      daysLeft > 0 ? themes[index].text : "I’m right here. Always.";
-
-    /* ===== Fullscreen 3D rose ===== */
     const roseBtn = document.getElementById("rose");
     const overlay = document.getElementById("overlay");
     const closeBtn = document.getElementById("close");
     const music = document.getElementById("music");
     const viewer = document.getElementById("viewer");
 
-    let scene, camera, renderer, model, controls, started = false;
+    let scene, camera, renderer, controls, started = false;
 
     function init3D() {
       scene = new THREE.Scene();
 
-      camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+      camera = new THREE.PerspectiveCamera(
+        45,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        100
+      );
       camera.position.set(0, 1.2, 3);
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -203,10 +169,9 @@
       scene.add(light);
 
       const loader = new GLTFLoader();
-      loader.load("./rose.glb", gltf => {
-        model = gltf.scene;
-        model.scale.set(0.6, 0.6, 0.6);
-        scene.add(model);
+      loader.load("./rose.glb", (gltf) => {
+        gltf.scene.scale.set(0.6, 0.6, 0.6);
+        scene.add(gltf.scene);
       });
 
       controls = new OrbitControls(camera, renderer.domElement);
@@ -221,7 +186,7 @@
 
     function animate() {
       requestAnimationFrame(animate);
-      if (controls) controls.update();
+      controls.update();
       renderer.render(scene, camera);
     }
 
