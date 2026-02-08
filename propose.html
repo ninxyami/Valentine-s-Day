@@ -75,6 +75,17 @@
       max-height: 60vh;
     }
 
+    #holdHint {
+      margin-top: 0.8rem;
+      font-size: 0.85rem;
+      opacity: 0.65;
+      transition: opacity 0.6s ease;
+    }
+
+    #holdHint.hide {
+      opacity: 0;
+    }
+
     #message {
       margin-top: 1.4rem;
       font-size: 1.4rem;
@@ -119,8 +130,10 @@
   <div class="hint">Press and hold</div>
 </div>
 
+<!-- Fullscreen game -->
 <div id="overlay">
   <img id="frame" />
+  <div id="holdHint">Press and hold</div>
   <div id="message">Will you be mine?</div>
   <button id="retry">Try again</button>
   <button id="close">×</button>
@@ -133,6 +146,7 @@
   const ringBtn = document.getElementById("ring");
   const overlay = document.getElementById("overlay");
   const frameImg = document.getElementById("frame");
+  const holdHint = document.getElementById("holdHint");
   const message = document.getElementById("message");
   const retryBtn = document.getElementById("retry");
   const closeBtn = document.getElementById("close");
@@ -149,7 +163,7 @@
     return `./assets/${n}.jpg`;
   }
 
-  /* 🔑 PRELOAD FRAMES (CRITICAL FIX) */
+  /* Preload frames */
   const frames = [];
   for (let i = 1; i <= TOTAL_FRAMES; i++) {
     const img = new Image();
@@ -162,9 +176,9 @@
   function loop() {
     if (overlay.style.display === "flex" && !completed) {
       if (holding) {
-        frame += 0.18;      // forward (hold)
+        frame += 0.10;   // forward (hold)
       } else {
-        frame -= 0.35;      // backward (release)
+        frame -= 0.25;   // backward (release)
       }
 
       frame = Math.max(1, Math.min(TOTAL_FRAMES, frame));
@@ -188,9 +202,11 @@
     frame = 1;
     holding = false;
     completed = false;
+
+    frameImg.src = frames[0].src;
     message.classList.remove("show");
     retryBtn.style.display = "none";
-    frameImg.src = frames[0].src;
+    holdHint.classList.remove("hide");
 
     bgMusic.volume = 0.45;
     bgMusic.play().catch(() => {});
@@ -199,6 +215,7 @@
   overlay.addEventListener("pointerdown", (e) => {
     if (e.target.id === "close") return;
     holding = true;
+    holdHint.classList.add("hide");
   });
 
   overlay.addEventListener("pointerup", () => {
@@ -212,9 +229,10 @@
   retryBtn.onclick = () => {
     frame = 1;
     completed = false;
+    frameImg.src = frames[0].src;
     message.classList.remove("show");
     retryBtn.style.display = "none";
-    frameImg.src = frames[0].src;
+    holdHint.classList.remove("hide");
   };
 
   closeBtn.onclick = () => {
