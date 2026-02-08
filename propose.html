@@ -56,7 +56,7 @@
       100% { transform: scale(1); }
     }
 
-    /* Fullscreen game */
+    /* Fullscreen overlay */
     #overlay {
       position: fixed;
       inset: 0;
@@ -119,7 +119,6 @@
   <div class="hint">Press and hold</div>
 </div>
 
-<!-- Fullscreen game -->
 <div id="overlay">
   <img id="frame" />
   <div id="message">Will you be mine?</div>
@@ -150,20 +149,28 @@
     return `./assets/${n}.jpg`;
   }
 
-  frameImg.src = framePath(1);
+  /* 🔑 PRELOAD FRAMES (CRITICAL FIX) */
+  const frames = [];
+  for (let i = 1; i <= TOTAL_FRAMES; i++) {
+    const img = new Image();
+    img.src = framePath(i);
+    frames.push(img);
+  }
+
+  frameImg.src = frames[0].src;
 
   function loop() {
     if (overlay.style.display === "flex" && !completed) {
       if (holding) {
-        frame += 0.5;
+        frame += 0.18;      // forward (hold)
       } else {
-        frame -= 0.8;
+        frame -= 0.35;      // backward (release)
       }
 
       frame = Math.max(1, Math.min(TOTAL_FRAMES, frame));
-      frameImg.src = framePath(Math.floor(frame));
+      frameImg.src = frames[Math.floor(frame) - 1].src;
 
-      if (frame >= TOTAL_FRAMES) {
+      if (frame >= TOTAL_FRAMES && holding) {
         completed = true;
         clickSound.currentTime = 0;
         clickSound.play().catch(() => {});
@@ -183,7 +190,7 @@
     completed = false;
     message.classList.remove("show");
     retryBtn.style.display = "none";
-    frameImg.src = framePath(1);
+    frameImg.src = frames[0].src;
 
     bgMusic.volume = 0.45;
     bgMusic.play().catch(() => {});
@@ -207,6 +214,7 @@
     completed = false;
     message.classList.remove("show");
     retryBtn.style.display = "none";
+    frameImg.src = frames[0].src;
   };
 
   closeBtn.onclick = () => {
