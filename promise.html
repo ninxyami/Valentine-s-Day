@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Promise Day 🤞</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #fff1f5 0%, #ffe4ec 100%);
+      font-family: 'Lato', sans-serif;
+      color: #4a1c2a;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.93);
+      padding: 2.6rem 2.2rem;
+      border-radius: 20px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(74,28,42,0.12);
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.65;
+      margin-bottom: 2.4rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .promise-area {
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 1.6rem;
+    }
+
+    .promise-line {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      line-height: 1.9;
+      color: #4a1c2a;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .promise-line.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .promise-line.dim {
+      opacity: 0.35;
+    }
+    .promise-line.final {
+      font-style: italic;
+      font-size: 1.35rem;
+      color: #c0394f;
+    }
+
+    .tap-area {
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tap-icon {
+      font-size: 2.8rem;
+      display: block;
+      animation: floatBob 2.5s ease-in-out infinite;
+      margin-bottom: 0.5rem;
+    }
+    @keyframes floatBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .tap-hint {
+      font-size: 0.85rem;
+      opacity: 0.55;
+      transition: opacity 0.4s;
+    }
+
+    .done-msg {
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: opacity 0.8s;
+      margin-top: 0.8rem;
+      font-style: italic;
+    }
+    .done-msg.show {
+      opacity: 0.6;
+    }
+
+    /* Pinky finger SVG */
+    .pinky-area {
+      margin: 0 auto 1.6rem;
+      width: 80px;
+      height: 80px;
+      opacity: 0.15;
+      transition: opacity 0.6s ease;
+    }
+    .pinky-area.active {
+      opacity: 1;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.4rem;
+      font-size: 0.8rem;
+      opacity: 0.5;
+      color: inherit;
+      text-decoration: none;
+    }
+    .back-link:hover { opacity: 0.8; }
+
+    /* Particle */
+    .sparkle {
+      position: fixed;
+      pointer-events: none;
+      font-size: 0.9rem;
+      animation: sparkUp 1s ease-out forwards;
+      z-index: 100;
+    }
+    @keyframes sparkUp {
+      0% { opacity: 1; transform: translate(0,0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--dx), -60px) scale(0.4); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="title">Promise Day 🤞</div>
+  <div class="subtitle">Feb 11 · Just for you</div>
+
+  <div class="pinky-area" id="pinky">
+    <svg viewBox="0 0 80 80">
+      <!-- Simple pinky finger interlock -->
+      <path d="M 20 65 Q 18 40 25 25 Q 30 15 38 18 Q 45 20 43 32 L 42 45" 
+            stroke="#c8855a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M 60 65 Q 62 40 55 25 Q 50 15 42 18 Q 35 20 37 32 L 38 45"
+            stroke="#c8855a" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="40" cy="48" r="4" fill="#c0394f" opacity="0.8"/>
+    </svg>
+  </div>
+
+  <div class="promise-area" id="promiseArea">
+    <div class="promise-line" id="p0">I promise to stay.</div>
+    <div class="promise-line" id="p1">Even when things are hard.</div>
+    <div class="promise-line" id="p2">Even from far away.</div>
+    <div class="promise-line" id="p3">Even in silence.</div>
+    <div class="promise-line final" id="p4">Especially then.</div>
+  </div>
+
+  <div class="tap-area" id="tapArea">
+    <span class="tap-icon" id="tapIcon">🤞</span>
+    <div class="tap-hint" id="tapHint">tap to reveal</div>
+  </div>
+
+  <div class="done-msg" id="doneMsg">These aren't just words. I mean every single one.</div>
+
+  <a href="index.html" class="back-link">← back</a>
+</div>
+
+<audio id="bgMusic" src="promise.mp3" loop></audio>
+
+<script>
+  const promises = ['p0','p1','p2','p3','p4'];
+  let step = 0;
+  const tapArea = document.getElementById('tapArea');
+  const tapHint = document.getElementById('tapHint');
+  const tapIcon = document.getElementById('tapIcon');
+  const pinky = document.getElementById('pinky');
+  const doneMsg = document.getElementById('doneMsg');
+  const bgMusic = document.getElementById('bgMusic');
+  let musicStarted = false;
+
+  function tryPlayMusic() {
+    if (!musicStarted) {
+      musicStarted = true;
+      bgMusic.volume = 0.45;
+      bgMusic.play().catch(() => {});
+    }
+  }
+
+  function spawnSparkle(x, y) {
+    for (let i = 0; i < 4; i++) {
+      const el = document.createElement('div');
+      el.className = 'sparkle';
+      el.textContent = ['✨','💕','🤍','🌸'][Math.floor(Math.random()*4)];
+      const dx = (Math.random()-0.5)*80;
+      el.style.setProperty('--dx', dx+'px');
+      el.style.left = (x + (Math.random()-0.5)*40) + 'px';
+      el.style.top = (y) + 'px';
+      el.style.animationDelay = (i*0.1)+'s';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1100);
+    }
+  }
+
+  tapArea.addEventListener('click', (e) => {
+    tryPlayMusic();
+    const rect = tapArea.getBoundingClientRect();
+    spawnSparkle(e.clientX || rect.left + rect.width/2, e.clientY || rect.top);
+
+    if (step === 0) {
+      pinky.classList.add('active');
+    }
+
+    if (step < promises.length) {
+      const el = document.getElementById(promises[step]);
+      // Dim previous
+      if (step > 0) {
+        document.getElementById(promises[step-1]).classList.add('dim');
+        document.getElementById(promises[step-1]).classList.remove('show');
+        // Re-show all revealed ones dimmed
+        for (let i = 0; i < step; i++) {
+          const prev = document.getElementById(promises[i]);
+          prev.classList.add('show');
+          prev.classList.add('dim');
+        }
+      }
+      el.classList.add('show');
+      el.classList.remove('dim');
+      step++;
+
+      if (step === promises.length) {
+        tapHint.textContent = '✓';
+        tapIcon.style.animation = 'none';
+        tapIcon.style.opacity = '0.3';
+        setTimeout(() => {
+          doneMsg.classList.add('show');
+        }, 800);
+      } else {
+        tapHint.textContent = 'tap again';
+      }
+    }
+  });
+</script>
+</body>
+</html>

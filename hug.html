@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hug Day 🤍</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap');
+
+    * { box-sizing: border-box; }
+
+    :root {
+      --glow: 0;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #fff1f5 0%, #ffe4ec 100%);
+      font-family: 'Lato', sans-serif;
+      color: #4a1c2a;
+      overflow: hidden;
+    }
+
+    /* Full-screen glow overlay */
+    #glowOverlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(255,180,100,0.55) 0%, rgba(255,120,60,0.2) 50%, transparent 80%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      z-index: 0;
+    }
+    #glowOverlay.on {
+      opacity: 1;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.93);
+      padding: 2.4rem 2rem;
+      border-radius: 20px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(74,28,42,0.12);
+      transition: box-shadow 1s ease;
+    }
+    .card.warm {
+      box-shadow: 0 20px 70px rgba(200,100,30,0.25);
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.65;
+      margin-bottom: 2rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Two silhouettes SVG */
+    .figures-area {
+      position: relative;
+      width: 220px;
+      height: 180px;
+      margin: 0 auto 1.2rem;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .figures-area svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    /* Heartbeat pulse ring */
+    .pulse-ring {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      border: 2px solid rgba(200, 80, 50, 0);
+      animation: heartPulse 1.4s ease-in-out infinite;
+      opacity: 0;
+      transition: opacity 0.6s;
+      pointer-events: none;
+    }
+    .pulse-ring.on {
+      opacity: 1;
+    }
+    @keyframes heartPulse {
+      0% { transform: scale(0.95); border-color: rgba(200,80,50,0.5); }
+      50% { transform: scale(1.05); border-color: rgba(200,80,50,0.15); }
+      100% { transform: scale(0.95); border-color: rgba(200,80,50,0.5); }
+    }
+
+    .hold-hint {
+      font-size: 0.85rem;
+      opacity: 0.55;
+      margin-bottom: 1.4rem;
+      transition: opacity 0.5s;
+    }
+
+    .message {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      line-height: 1.7;
+      min-height: 2.8rem;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      color: #6d1e35;
+      font-style: italic;
+    }
+    .message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Vignette when holding */
+    #vignette {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(74,28,42,0.25) 100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
+      z-index: 0;
+    }
+    #vignette.on { opacity: 1; }
+
+    /* Floating warm particles */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      font-size: 1rem;
+      animation: floatWarm 2.2s ease-out forwards;
+      z-index: 100;
+    }
+    @keyframes floatWarm {
+      0% { opacity: 0.9; transform: translateY(0) scale(1) rotate(0deg); }
+      100% { opacity: 0; transform: translateY(-100px) scale(0.4) rotate(20deg); }
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.8rem;
+      font-size: 0.8rem;
+      opacity: 0.5;
+      color: inherit;
+      text-decoration: none;
+    }
+    .back-link:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+
+<div id="glowOverlay"></div>
+<div id="vignette"></div>
+
+<div class="card" id="card">
+  <div class="title">Hug Day 🤍</div>
+  <div class="subtitle">Feb 12 · I'm right here</div>
+
+  <div class="figures-area" id="figures">
+    <div class="pulse-ring" id="pulseRing"></div>
+    <svg viewBox="0 0 220 180" id="hugSvg">
+      <!-- Left figure (you / Ninny) -->
+      <g id="figLeft" style="transform-origin: 110px 90px;">
+        <!-- Body -->
+        <ellipse cx="72" cy="130" rx="20" ry="32" fill="#4a1c2a"/>
+        <!-- Head -->
+        <circle cx="72" cy="90" r="22" fill="#c8855a"/>
+        <!-- Hair -->
+        <ellipse cx="72" cy="75" rx="22" ry="12" fill="#2d1200"/>
+        <!-- Left arm (extended toward center) -->
+        <path d="M 72 120 Q 92 118 108 130" stroke="#4a1c2a" stroke-width="10" fill="none" stroke-linecap="round" id="leftArm"/>
+        <!-- Eyes -->
+        <circle cx="65" cy="90" r="3.5" fill="#2d1200"/>
+        <circle cx="79" cy="90" r="3.5" fill="#2d1200"/>
+        <!-- Smile (small, content) -->
+        <path d="M 67 98 Q 72 103 77 98" stroke="#2d1200" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- Right figure (Princess / Cece) -->
+      <g id="figRight" style="transform-origin: 110px 90px;">
+        <!-- Body -->
+        <ellipse cx="148" cy="130" rx="20" ry="32" fill="#c0394f"/>
+        <!-- Dress detail -->
+        <path d="M 128 120 Q 148 142 168 120" fill="#a0213a"/>
+        <!-- Head -->
+        <circle cx="148" cy="90" r="22" fill="#d4956a"/>
+        <!-- Hair (long) -->
+        <ellipse cx="148" cy="74" rx="23" ry="13" fill="#2d1200"/>
+        <path d="M 126 80 Q 120 110 124 140" stroke="#2d1200" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <path d="M 170 80 Q 176 110 172 140" stroke="#2d1200" stroke-width="8" fill="none" stroke-linecap="round"/>
+        <!-- Right arm (extended toward center) -->
+        <path d="M 148 120 Q 128 118 112 130" stroke="#c0394f" stroke-width="10" fill="none" stroke-linecap="round" id="rightArm"/>
+        <!-- Eyes -->
+        <circle cx="141" cy="90" r="3.5" fill="#2d1200"/>
+        <circle cx="155" cy="90" r="3.5" fill="#2d1200"/>
+        <!-- Smile -->
+        <path d="M 143 98 Q 148 103 153 98" stroke="#2d1200" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <!-- Center heart (appears when holding) -->
+      <text x="102" y="122" font-size="18" opacity="0" id="centerHeart" style="transition: opacity 0.8s ease">❤️</text>
+
+      <!-- Distance gap line (fades when holding) -->
+      <line x1="97" y1="90" x2="123" y2="90" stroke="#e8b4c0" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6" id="distanceLine" style="transition: opacity 0.6s ease"/>
+    </svg>
+  </div>
+
+  <div class="hold-hint" id="holdHint">press and hold</div>
+  <div class="message" id="message">This is me, holding you.</div>
+
+  <a href="index.html" class="back-link">← back</a>
+</div>
+
+<audio id="bgMusic" src="hug.mp3" loop></audio>
+
+<script>
+  const figures = document.getElementById('figures');
+  const bgMusic = document.getElementById('bgMusic');
+  let musicStarted = false;
+  const card = document.getElementById('card');
+  const glowOverlay = document.getElementById('glowOverlay');
+  const vignette = document.getElementById('vignette');
+  const pulseRing = document.getElementById('pulseRing');
+  const figLeft = document.getElementById('figLeft');
+  const figRight = document.getElementById('figRight');
+  const leftArm = document.getElementById('leftArm');
+  const rightArm = document.getElementById('rightArm');
+  const centerHeart = document.getElementById('centerHeart');
+  const distanceLine = document.getElementById('distanceLine');
+  const holdHint = document.getElementById('holdHint');
+  const message = document.getElementById('message');
+
+  let holding = false;
+  let warmth = 0;
+  let animFrame;
+  let particleInterval;
+
+  function spawnParticle() {
+    const rect = figures.getBoundingClientRect();
+    const el = document.createElement('div');
+    el.className = 'particle';
+    el.textContent = ['🤍','💛','✨','🧡','💗'][Math.floor(Math.random()*5)];
+    el.style.left = (rect.left + rect.width*0.3 + Math.random()*rect.width*0.4) + 'px';
+    el.style.top = (rect.top + Math.random()*rect.height*0.6) + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 2300);
+  }
+
+  function update(w) {
+    warmth = Math.max(0, Math.min(1, w));
+
+    // Figures move together
+    const shift = warmth * 18;
+    figLeft.style.transform = `translateX(${shift}px)`;
+    figRight.style.transform = `translateX(${-shift}px)`;
+
+    // Arms wrap more
+    const leftPath = `M 72 120 Q ${92 + warmth*8} ${118 - warmth*6} ${108 - warmth*10} ${130 - warmth*8}`;
+    const rightPath = `M 148 120 Q ${128 - warmth*8} ${118 - warmth*6} ${112 + warmth*10} ${130 - warmth*8}`;
+    leftArm.setAttribute('d', leftPath);
+    rightArm.setAttribute('d', rightPath);
+
+    centerHeart.style.opacity = Math.max(0, (warmth - 0.4) * 1.7);
+    distanceLine.style.opacity = Math.max(0, 0.6 - warmth * 1.2);
+
+    if (warmth > 0.4) {
+      message.classList.add('show');
+    } else {
+      message.classList.remove('show');
+    }
+  }
+
+  function startHold() {
+    holding = true;
+    card.classList.add('warm');
+    glowOverlay.classList.add('on');
+    vignette.classList.add('on');
+    pulseRing.classList.add('on');
+    holdHint.style.opacity = '0';
+    particleInterval = setInterval(spawnParticle, 700);
+    if (!musicStarted) {
+      musicStarted = true;
+      bgMusic.volume = 0.45;
+      bgMusic.play().catch(() => {});
+    }
+
+    function grow() {
+      if (!holding) return;
+      update(warmth + 0.012);
+      animFrame = requestAnimationFrame(grow);
+    }
+    grow();
+  }
+
+  function stopHold() {
+    holding = false;
+    card.classList.remove('warm');
+    glowOverlay.classList.remove('on');
+    vignette.classList.remove('on');
+    pulseRing.classList.remove('on');
+    holdHint.style.opacity = '0.55';
+    holdHint.textContent = 'hold again';
+    clearInterval(particleInterval);
+    cancelAnimationFrame(animFrame);
+
+    function shrink() {
+      if (holding || warmth <= 0) return;
+      update(warmth - 0.02);
+      if (warmth > 0) requestAnimationFrame(shrink);
+    }
+    shrink();
+  }
+
+  figures.addEventListener('pointerdown', (e) => { e.preventDefault(); startHold(); });
+  figures.addEventListener('pointerup', stopHold);
+  figures.addEventListener('pointerleave', stopHold);
+  figures.addEventListener('pointercancel', stopHold);
+  document.addEventListener('pointerup', stopHold);
+</script>
+</body>
+</html>

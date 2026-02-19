@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kiss Day 💋</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #fff1f5 0%, #ffe4ec 100%);
+      font-family: 'Lato', sans-serif;
+      color: #4a1c2a;
+      overflow: hidden;
+    }
+
+    /* Dramatic overlay when close */
+    #darkOverlay {
+      position: fixed;
+      inset: 0;
+      background: #1a0510;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.2s ease;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.93);
+      padding: 2.4rem 2rem;
+      border-radius: 20px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(74,28,42,0.12);
+      transition: background 1s ease, box-shadow 1s ease, opacity 0.8s ease;
+    }
+    .card.fading {
+      background: rgba(26,5,16,0.95);
+      color: white;
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.65;
+      margin-bottom: 1.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Silhouettes scene */
+    .scene {
+      position: relative;
+      width: 240px;
+      height: 200px;
+      margin: 0 auto 1rem;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      cursor: pointer;
+      touch-action: none;
+      overflow: hidden;
+    }
+
+    #sceneSvg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .hold-hint {
+      font-size: 0.85rem;
+      opacity: 0.55;
+      margin-bottom: 1.2rem;
+      transition: opacity 0.5s;
+    }
+
+    .message {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      line-height: 1.6;
+      min-height: 2.5rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1s ease, transform 1s ease;
+      font-style: italic;
+    }
+    .card.fading .message {
+      color: #ffb4c8;
+    }
+    .message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Stars that appear as it gets darker */
+    .star {
+      position: fixed;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1.5s ease;
+      z-index: 0;
+    }
+    .star.on { opacity: 0.7; }
+
+    /* Subtle lip print that appears at the end */
+    #lipPrint {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.3);
+      font-size: 5rem;
+      opacity: 0;
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      pointer-events: none;
+      z-index: 200;
+    }
+    #lipPrint.show {
+      opacity: 0.6;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.8rem;
+      font-size: 0.8rem;
+      opacity: 0.5;
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.5s;
+    }
+    .card.fading .back-link { color: #ffb4c8; opacity: 0.4; }
+    .back-link:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+
+<div id="darkOverlay"></div>
+<div id="lipPrint">💋</div>
+
+<!-- Stars (scattered, appear as dark) -->
+<script>
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.left = Math.random()*100+'vw';
+    s.style.top = Math.random()*100+'vh';
+    s.style.width = (Math.random()*2.5+1)+'px';
+    s.style.height = s.style.width;
+    s.id = 'star'+i;
+    document.body.appendChild(s);
+  }
+</script>
+
+<div class="card" id="card">
+  <div class="title">Kiss Day 💋</div>
+  <div class="subtitle">Feb 13 · Anticipation</div>
+
+  <div class="scene" id="scene">
+    <svg viewBox="0 0 240 200" id="sceneSvg">
+      <!-- Moonlight/ambient -->
+      <defs>
+        <radialGradient id="moonGlow" cx="50%" cy="0%" r="60%">
+          <stop offset="0%" stop-color="#fff5e0" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="120" cy="0" rx="120" ry="80" fill="url(#moonGlow)" id="moonGlowEl" opacity="0"/>
+
+      <!-- Left silhouette (Ninny) - faces right -->
+      <g id="siloLeft">
+        <!-- Body -->
+        <ellipse cx="58" cy="150" rx="18" ry="36" fill="#4a1c2a"/>
+        <!-- Head -->
+        <circle cx="58" cy="105" r="22" fill="#4a1c2a"/>
+        <!-- Shoulder lean -->
+        <ellipse cx="70" cy="130" rx="12" ry="8" fill="#4a1c2a" transform="rotate(-20 70 130)"/>
+      </g>
+
+      <!-- Right silhouette (Princess) - faces left -->
+      <g id="siloRight">
+        <!-- Body -->
+        <ellipse cx="182" cy="150" rx="18" ry="36" fill="#6d1e35"/>
+        <!-- Dress flare -->
+        <path d="M 164 140 Q 182 165 200 140" fill="#5a1828"/>
+        <!-- Head -->
+        <circle cx="182" cy="105" r="22" fill="#6d1e35"/>
+        <!-- Hair flowing left -->
+        <path d="M 162 95 Q 155 115 158 145" stroke="#2d1200" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <!-- Hair right -->
+        <ellipse cx="184" cy="90" rx="23" ry="13" fill="#2d1200"/>
+      </g>
+
+      <!-- Eyes that appear as they get close (suggest they're looking at each other) -->
+      <g id="eyesGroup" opacity="0">
+        <circle cx="70" cy="105" r="3.5" fill="#ff8fa0"/>
+        <circle cx="170" cy="105" r="3.5" fill="#ff8fa0"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="hold-hint" id="holdHint">press and hold</div>
+  <div class="message" id="message">Soon.</div>
+
+  <a href="index.html" class="back-link">← back</a>
+</div>
+
+<audio id="bgMusic" src="kiss.mp3" loop></audio>
+
+<script>
+  const scene = document.getElementById('scene');
+  const bgMusic = document.getElementById('bgMusic');
+  let musicStarted = false;
+  const card = document.getElementById('card');
+  const darkOverlay = document.getElementById('darkOverlay');
+  const siloLeft = document.getElementById('siloLeft');
+  const siloRight = document.getElementById('siloRight');
+  const eyesGroup = document.getElementById('eyesGroup');
+  const moonGlowEl = document.getElementById('moonGlowEl');
+  const holdHint = document.getElementById('holdHint');
+  const message = document.getElementById('message');
+  const lipPrint = document.getElementById('lipPrint');
+
+  let holding = false;
+  let progress = 0;
+  let animFrame;
+  let completed = false;
+
+  function update(p) {
+    progress = Math.max(0, Math.min(1, p));
+
+    // Move figures together
+    const shift = progress * 38;
+    siloLeft.style.transform = `translateX(${shift}px)`;
+    siloRight.style.transform = `translateX(${-shift}px)`;
+
+    // Darken
+    darkOverlay.style.opacity = progress * 0.82;
+
+    // Stars appear
+    const starCount = Math.floor(progress * 40);
+    document.querySelectorAll('.star').forEach((s, i) => {
+      s.classList.toggle('on', i < starCount);
+    });
+
+    // Moon glow
+    moonGlowEl.style.opacity = progress * 0.9;
+
+    // Eyes glow
+    eyesGroup.style.opacity = Math.max(0, (progress - 0.4) * 2.5);
+
+    // Card darkens
+    card.classList.toggle('fading', progress > 0.5);
+
+    // Message
+    if (progress > 0.6 && !completed) {
+      message.classList.add('show');
+    } else if (progress < 0.5) {
+      message.classList.remove('show');
+    }
+
+    // Full approach - lip print
+    if (progress >= 0.98 && !completed) {
+      completed = true;
+      lipPrint.classList.add('show');
+      setTimeout(() => {
+        lipPrint.classList.remove('show');
+        completed = false;
+      }, 2000);
+    }
+  }
+
+  function startHold() {
+    holding = true;
+    holdHint.style.opacity = '0';
+    if (!musicStarted) {
+      musicStarted = true;
+      bgMusic.volume = 0.45;
+      bgMusic.play().catch(() => {});
+    }
+
+    function grow() {
+      if (!holding) return;
+      update(progress + 0.008);
+      if (progress < 1) animFrame = requestAnimationFrame(grow);
+    }
+    grow();
+  }
+
+  function stopHold() {
+    holding = false;
+    cancelAnimationFrame(animFrame);
+    holdHint.style.opacity = '0.55';
+    holdHint.textContent = 'hold again';
+
+    function shrink() {
+      if (holding || progress <= 0) return;
+      update(progress - 0.015);
+      if (progress > 0) requestAnimationFrame(shrink);
+    }
+    shrink();
+  }
+
+  scene.addEventListener('pointerdown', (e) => { e.preventDefault(); startHold(); });
+  scene.addEventListener('pointerup', stopHold);
+  scene.addEventListener('pointerleave', stopHold);
+  scene.addEventListener('pointercancel', stopHold);
+  document.addEventListener('pointerup', stopHold);
+</script>
+</body>
+</html>

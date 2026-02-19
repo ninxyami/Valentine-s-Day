@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chocolate Day 🍫</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap');
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #fff1f5 0%, #ffe4ec 100%);
+      font-family: 'Lato', sans-serif;
+      color: #4a1c2a;
+      overflow: hidden;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.93);
+      padding: 2.4rem 2rem;
+      border-radius: 20px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(74,28,42,0.12);
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      margin-bottom: 0.3rem;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      opacity: 0.65;
+      margin-bottom: 2rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Chocolate box SVG area */
+    .choc-area {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 1.6rem;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .choc-area svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .tap-hint {
+      font-size: 0.85rem;
+      opacity: 0.6;
+      margin-bottom: 0.5rem;
+      transition: opacity 0.4s;
+    }
+
+    .step-message {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      line-height: 1.6;
+      min-height: 3rem;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+      margin-bottom: 1rem;
+      color: #6d1e35;
+    }
+    .step-message.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .progress-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #e8b4c0;
+      transition: background 0.4s, transform 0.3s;
+    }
+    .dot.active {
+      background: #c0394f;
+      transform: scale(1.3);
+    }
+
+    /* Floating hearts */
+    .heart-burst {
+      position: fixed;
+      pointer-events: none;
+      font-size: 1.4rem;
+      animation: floatUp 1.2s ease-out forwards;
+      z-index: 100;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-80px) scale(0.6); }
+    }
+
+    /* Shine effect on chocolate */
+    .shine {
+      animation: shineFlash 0.4s ease-out;
+    }
+    @keyframes shineFlash {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.6); }
+      100% { filter: brightness(1); }
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      opacity: 0.5;
+      color: inherit;
+      text-decoration: none;
+    }
+    .back-link:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="title">Chocolate Day 🍫</div>
+  <div class="subtitle">Feb 9 · Something sweet</div>
+
+  <div class="choc-area" id="chocArea">
+    <svg viewBox="0 0 200 200" id="chocSvg">
+      <!-- Box lid (starts closed) -->
+      <g id="boxLid">
+        <rect x="20" y="30" width="160" height="110" rx="10" fill="#5c2e00" />
+        <rect x="25" y="35" width="150" height="100" rx="8" fill="#7a3d00" />
+        <!-- Ribbon vertical -->
+        <rect x="95" y="30" width="10" height="110" rx="3" fill="#c0394f" opacity="0.9"/>
+        <!-- Ribbon horizontal -->
+        <rect x="20" y="78" width="160" height="10" rx="3" fill="#c0394f" opacity="0.9"/>
+        <!-- Bow -->
+        <ellipse cx="100" cy="82" rx="22" ry="13" fill="#e8506a" transform="rotate(-20 100 82)"/>
+        <ellipse cx="100" cy="82" rx="22" ry="13" fill="#e8506a" transform="rotate(20 100 82)"/>
+        <circle cx="100" cy="82" r="8" fill="#c0394f"/>
+        <!-- Lid shine -->
+        <rect x="30" y="40" width="60" height="18" rx="5" fill="white" opacity="0.08"/>
+      </g>
+
+      <!-- Box bottom (always visible behind) -->
+      <g id="boxBottom">
+        <rect x="20" y="80" width="160" height="90" rx="10" fill="#3d1f00"/>
+        <!-- Chocolates grid (hidden initially) -->
+        <g id="chocolates" opacity="0">
+          <!-- Row 1 -->
+          <rect x="35" y="93" width="32" height="22" rx="5" fill="#6b2e00"/>
+          <rect x="35" y="93" width="32" height="22" rx="5" fill="url(#choc1)" opacity="0.7"/>
+          <rect x="77" y="93" width="32" height="22" rx="5" fill="#5a1f00"/>
+          <rect x="77" y="93" width="32" height="22" rx="5" fill="url(#choc2)" opacity="0.7"/>
+          <rect x="119" y="93" width="42" height="22" rx="5" fill="#7c3a00"/>
+          <!-- Row 2 -->
+          <rect x="35" y="123" width="52" height="22" rx="5" fill="#6b2e00"/>
+          <rect x="97" y="123" width="32" height="22" rx="5" fill="#5a1f00"/>
+          <rect x="139" y="123" width="22" height="22" rx="5" fill="#7c3a00"/>
+          <!-- Shines -->
+          <rect x="38" y="95" width="12" height="5" rx="2" fill="white" opacity="0.15"/>
+          <rect x="80" y="95" width="10" height="5" rx="2" fill="white" opacity="0.15"/>
+          <rect x="122" y="95" width="14" height="5" rx="2" fill="white" opacity="0.15"/>
+          <rect x="38" y="125" width="16" height="5" rx="2" fill="white" opacity="0.15"/>
+          <rect x="100" y="125" width="10" height="5" rx="2" fill="white" opacity="0.15"/>
+        </g>
+        <defs>
+          <linearGradient id="choc1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ff9966"/>
+            <stop offset="100%" stop-color="#8b2500"/>
+          </linearGradient>
+          <linearGradient id="choc2" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffe066"/>
+            <stop offset="100%" stop-color="#6b3a00"/>
+          </linearGradient>
+        </defs>
+      </g>
+
+      <!-- Bite taken (hidden initially) -->
+      <g id="biteGroup" opacity="0">
+        <rect x="35" y="93" width="32" height="22" rx="5" fill="#6b2e00"/>
+        <!-- Bite mark -->
+        <path d="M 51 93 Q 58 97 67 93 L 67 97 Q 60 102 51 98 Z" fill="#3d1f00"/>
+        <!-- Inside exposed -->
+        <path d="M 51 93 Q 58 97 67 93 L 67 97 Q 60 102 51 98 Z" fill="#c97940" opacity="0.8"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="tap-hint" id="tapHint">tap to open</div>
+  <div class="step-message" id="stepMsg"></div>
+
+  <div class="progress-dots" id="dots">
+    <div class="dot" id="d0"></div>
+    <div class="dot" id="d1"></div>
+    <div class="dot" id="d2"></div>
+    <div class="dot" id="d3"></div>
+    <div class="dot" id="d4"></div>
+  </div>
+
+  <a href="index.html" class="back-link">← back</a>
+</div>
+
+<audio id="bgMusic" src="chocolate.mp3" loop></audio>
+
+<script>
+  // Play on first tap
+  let musicStarted = false;
+  function tryPlayMusic() {
+    if (!musicStarted) {
+      musicStarted = true;
+      const m = document.getElementById('bgMusic');
+      m.volume = 0.45;
+      m.play().catch(() => {});
+    }
+  }
+
+  const steps = [
+    { msg: "", action: 'open' },
+    { msg: "Here. I picked the best one for you.", action: 'offer' },
+    { msg: "Go on, unwrap it. It's yours.", action: 'unwrap' },
+    { msg: "Just like you — sweet at the very first bite.", action: 'bite' },
+    { msg: "Every sweet thing I taste, I think of you. Every time.", action: 'final' },
+  ];
+
+  let step = 0;
+  const area = document.getElementById('chocArea');
+  const lid = document.getElementById('boxLid');
+  const chocolates = document.getElementById('chocolates');
+  const biteGroup = document.getElementById('biteGroup');
+  const stepMsg = document.getElementById('stepMsg');
+  const tapHint = document.getElementById('tapHint');
+  const dots = document.querySelectorAll('.dot');
+  const svg = document.getElementById('chocSvg');
+
+  function updateDot(i) {
+    dots.forEach((d, idx) => {
+      d.classList.toggle('active', idx <= i);
+    });
+  }
+
+  function showMessage(msg) {
+    stepMsg.classList.remove('show');
+    setTimeout(() => {
+      stepMsg.textContent = msg;
+      if (msg) stepMsg.classList.add('show');
+    }, 200);
+  }
+
+  function spawnHearts(x, y) {
+    const emojis = ['🍫','💕','✨','🤍','💗'];
+    for (let i = 0; i < 3; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'heart-burst';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = (x + (Math.random()-0.5)*60) + 'px';
+        el.style.top = (y + (Math.random()-0.5)*30) + 'px';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1300);
+      }, i * 120);
+    }
+  }
+
+  area.addEventListener('click', (e) => {
+    tryPlayMusic();
+    const rect = area.getBoundingClientRect();
+    const cx = e.clientX || rect.left + rect.width/2;
+    const cy = e.clientY || rect.top + rect.height/2;
+
+    spawnHearts(cx, cy);
+    svg.classList.add('shine');
+    setTimeout(() => svg.classList.remove('shine'), 400);
+
+    if (step === 0) {
+      // Open the box - lid slides up
+      lid.style.transition = 'transform 0.6s ease, opacity 0.5s ease';
+      lid.style.transform = 'translateY(-80px) rotate(-8deg)';
+      lid.style.opacity = '0';
+      setTimeout(() => {
+        chocolates.style.transition = 'opacity 0.5s ease';
+        chocolates.style.opacity = '1';
+      }, 400);
+      tapHint.style.opacity = '0.4';
+      tapHint.textContent = 'tap again';
+    } else if (step === 1) {
+      showMessage(steps[1].msg);
+    } else if (step === 2) {
+      showMessage(steps[2].msg);
+    } else if (step === 3) {
+      // Show bite
+      biteGroup.style.transition = 'opacity 0.4s';
+      biteGroup.style.opacity = '1';
+      showMessage(steps[3].msg);
+    } else if (step === 4) {
+      showMessage(steps[4].msg);
+      tapHint.style.opacity = '0';
+    }
+
+    updateDot(step);
+    step++;
+  });
+</script>
+</body>
+</html>
